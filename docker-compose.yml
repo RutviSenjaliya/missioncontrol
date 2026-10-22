@@ -1,0 +1,18 @@
+# Local PostgreSQL for development and demos: docker compose up -d db
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: missioncontrol
+      POSTGRES_PASSWORD: missioncontrol
+      POSTGRES_DB: missioncontrol
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U missioncontrol"]
+      interval: 5s
+      retries: 10
+volumes:
+  pgdata:
