@@ -11,6 +11,8 @@ Everything below was run in the build environment on 22 October 2026 (Ubuntu 24.
 | Clean install (`python -m venv` + `pip install -r requirements.txt`) then full suite | **36/36 passed** |
 | Frontend `npm ci` from lockfile, `tsc` typecheck, Vitest, production build | **pass, 4/4 unit tests** |
 | Alembic `upgrade head` on empty PostgreSQL and `alembic check` | **clean** |
+| Fresh `git clone` → `./scripts/setup.sh` on an empty PostgreSQL database → `./scripts/run_tests.sh` | **pass (36 backend + 4 frontend tests, build ok)** |
+| `npm audit --omit=dev` (packages shipped to the browser) | **0 vulnerabilities** |
 | Live smoke test against running API + MCP server + PostgreSQL | **17/17 checks passed** |
 | Live browser test (Chromium via Playwright) of login, dashboard, memory, mission, approval, report, connections, failure | **pass** |
 
@@ -130,4 +132,5 @@ What the suites cover:
 | Bedrock planner | No AWS credentials in the build environment | Set `AI_PROVIDER=bedrock`, `BEDROCK_MODEL_ID`, AWS credentials; `pip install boto3`; run the smoke test |
 | Hackathon-required MCP spec version | Official rules not available | Compare with the rules; see mcp-integration.md |
 | Google Fonts loading | Build environment has no internet access; UI fell back to system fonts | Open the app with internet access |
+| Dev-only npm advisories | `npm audit` reports advisories in dev tooling (Vite/Vitest/esbuild dev server); none in production packages | Keep the dev server bound to 127.0.0.1, or upgrade Vite/Vitest majors after re-testing |
 | Deployment to a public host | Out of scope for the build environment | See architecture.md §6 |

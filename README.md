@@ -161,7 +161,7 @@ Make the repository public (or grant judges access) and check it from a logged-o
 
 ## Known limitations
 
-The default planner handles the request types listed above; anything else fails honestly with suggestions. Memory search is keyword-based, not semantic. Projects are single-owner (membership exists in the schema, no invitation UI). No rate limiting. Bedrock planner unverified. Confirm the MCP specification version required by the official rules (this build negotiates 2025-06-18).
+The default planner handles the request types listed above; anything else fails honestly with suggestions. Memory search is keyword-based, not semantic. Projects are single-owner (membership exists in the schema, no invitation UI). No rate limiting. Bedrock planner unverified. `npm audit` lists advisories in dev-only tooling (Vite/Vitest dev server, bound to 127.0.0.1); production browser packages report none. Confirm the MCP specification version required by the official rules (this build negotiates 2025-06-18).
 
 ## Future work
 
