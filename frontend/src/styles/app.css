@@ -40,8 +40,8 @@ button, input, textarea, select { font: inherit; color: inherit; }
 /* ---------- shell */
 .shell { display: grid; grid-template-columns: 248px 1fr; min-height: 100%; }
 .rail { background: var(--surface); border-right: 1px solid var(--line); padding: 20px 14px; display: flex; flex-direction: column; gap: 22px; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
-.brand { font: 700 22px/1 var(--font-cond); letter-spacing: .01em; display: flex; align-items: center; gap: 10px; text-decoration: none; padding: 0 6px; }
-.brand-mark { width: 26px; height: 26px; border-radius: 6px; background: var(--ink); position: relative; }
+.rail .brand, .brand { font: 700 22px/1 var(--font-cond); letter-spacing: .01em; display: flex; align-items: center; gap: 10px; text-decoration: none; padding: 0 6px; }
+.brand-mark { flex: none; width: 26px; height: 26px; border-radius: 6px; background: var(--ink); position: relative; }
 .brand-mark::after { content: ""; position: absolute; left: 5px; top: 5px; bottom: 5px; width: 5px; background: var(--green); border-radius: 1px; }
 .rail-group h2 { font: 600 13px/1 var(--font-cond); color: var(--ink-2); margin: 0 6px 8px; letter-spacing: .02em; }
 .rail a { display: block; padding: 7px 8px; border-radius: 6px; text-decoration: none; color: var(--ink-2); font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
