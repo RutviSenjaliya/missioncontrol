@@ -35,7 +35,7 @@ flowchart LR
     MCP --> DB
 ```
 
-Details: [docs/architecture.md](docs/architecture.md) · MCP: [docs/mcp-integration.md](docs/mcp-integration.md) · Product: [docs/PRD.md](docs/PRD.md) · API: [docs/api.md](docs/api.md) · Decisions: [decisions.md](decisions.md)
+Details: [docs/architecture.md](docs/architecture.md) · MCP: [docs/mcp-integration.md](docs/mcp-integration.md) · Product: [docs/PRD.md](docs/PRD.md) · API: [docs/api.md](docs/api.md) · Decisions: [decisions.md](decisions.md) · Submission text: [docs/SUBMISSION.md](docs/SUBMISSION.md)
 
 | Layer | Technology |
 |---|---|
