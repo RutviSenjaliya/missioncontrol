@@ -183,7 +183,10 @@ class BedrockProvider:
         except ImportError as e:
             raise PlanningError("boto3 is not installed; run: pip install boto3") from e
         self.model_id = settings.bedrock_model_id
-        self.client = boto3.client("bedrock-runtime", region_name=settings.bedrock_region)
+        kwargs = {"region_name": settings.bedrock_region}
+        if settings.aws_access_key_id and settings.aws_secret_access_key:
+            kwargs |= {"aws_access_key_id": settings.aws_access_key_id, "aws_secret_access_key": settings.aws_secret_access_key}
+        self.client = boto3.client("bedrock-runtime", **kwargs)
 
     def plan(self, request: str, context: dict[str, Any], tools: dict[str, dict[str, Any]]) -> dict[str, Any]:
         system = (

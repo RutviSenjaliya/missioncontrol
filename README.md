@@ -116,10 +116,12 @@ pip install boto3
 # backend/.env
 AI_PROVIDER=bedrock
 BEDROCK_REGION=us-east-1
-BEDROCK_MODEL_ID=<a model id enabled in your account>
+BEDROCK_MODEL_ID=amazon.nova-lite-v1:0
+AWS_ACCESS_KEY_ID=<from your client>
+AWS_SECRET_ACCESS_KEY=<from your client>
 ```
 
-AWS credentials come from the standard AWS credential chain. The model’s plan goes through the same validation as the default planner (known tools only, forced project id, verification after writes, approval decided by the app). This path is implemented but was **not verified** in the build environment (no credentials).
+Put Bedrock-only IAM keys in `backend/.env` as `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` (the file is git-ignored), or leave them empty to use the standard AWS credential chain. The model’s plan goes through the same validation as the default planner (known tools only, forced project id, verification after writes, approval decided by the app). This path is implemented but was **not verified** in the build environment (no credentials).
 
 ## Repository layout
 

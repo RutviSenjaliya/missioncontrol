@@ -24,6 +24,10 @@ class Settings(BaseSettings):
     ai_provider: str = "rule"
     bedrock_region: str = "us-east-1"
     bedrock_model_id: str = ""
+    # Optional: AWS keys for Bedrock. If empty, boto3 uses the standard AWS credential chain
+    # (AWS_PROFILE, ~/.aws/credentials, environment variables, instance role).
+    aws_access_key_id: str = ""
+    aws_secret_access_key: str = ""
 
     # Agent execution limits
     agent_max_tool_calls: int = 12
