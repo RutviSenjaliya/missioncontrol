@@ -143,3 +143,12 @@ def test_report_tools_persist_to_shared_database_and_are_idempotent(mcp_server, 
     # Same source of truth: the REST API sees what the MCP tool wrote, including verification status.
     rep = client.get(f"/api/reports/{a.structuredContent['report_id']}", headers=auth()).json()
     assert rep["title"] == "MCP Report" and rep["verification_status"] == "passed" and "## Blockers" in rep["content"]
+
+
+def test_protocol_version_meets_alexa_plus_minimum(mcp_server):
+    """Alexa+ track rule: MCP spec 2025-11-25 or later over Streamable HTTP."""
+    async def go(s, init):
+        return init.protocolVersion
+
+    version = run(mcp_server, ALICE, go)
+    assert version >= "2025-11-25", version  # ISO dates compare correctly as strings

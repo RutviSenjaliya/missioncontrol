@@ -19,7 +19,7 @@ Teams using AI assistants over weeks keep re-explaining their project, and “do
 | Persistent memory | Goals, stack, constraints, procedures, decisions and tasks with source, confirmation status and supersession. Memory Center to confirm, edit and delete. |
 | Fresh-session context | Every mission retrieves current context through MCP; superseded facts (e.g. an old “use Flask” decision) are excluded. |
 | Missions | Handoff report, sprint plan, progress summary, show open tasks, search memory, add task, update task, record decision. |
-| Real MCP execution | 8 tools on a self-hosted MCP server, protocol 2025-06-18 over Streamable HTTP. The agent has no other way to act. |
+| Real MCP execution | 8 tools on a self-hosted MCP server, protocol 2025-11-25 over Streamable HTTP. The agent has no other way to act. |
 | Verification | Reports are read back and checked section by section, and every referenced task and decision must exist. Task and decision changes are read back and compared. |
 | Approval | Changes to project records wait for your approval, enforced by the MCP server. |
 | Honest failure | MCP outage, timeout, tool error, failed verification or an unsupported request end as Failed or Partially completed with a reason. Never a false green. |
@@ -41,7 +41,7 @@ Details: [docs/architecture.md](docs/architecture.md) · MCP: [docs/mcp-integrat
 |---|---|
 | Frontend | React 18, TypeScript 5.6, Vite 5 |
 | Backend | Python 3.12, FastAPI 0.115, SQLAlchemy 2.0, Alembic |
-| MCP | Official MCP Python SDK 1.12.4 (FastMCP), Streamable HTTP |
+| MCP | Official MCP Python SDK 1.30.0 (FastMCP), Streamable HTTP |
 | Database | PostgreSQL 16 (SQLite supported for tests) |
 | Planner | Deterministic rule-based planner (default); Amazon Bedrock planner (optional) |
 | Tests | pytest, Vitest, Playwright (manual live run) |
@@ -81,7 +81,7 @@ Create more users (for isolation tests or teammates): `cd backend && python -m a
 ## Verify it yourself
 
 ```bash
-./scripts/run_tests.sh                       # 36 backend tests + frontend typecheck, unit tests, build
+./scripts/run_tests.sh                       # 37 backend tests + frontend typecheck, unit tests, build
 python scripts/smoke_test.py --token change-me-demo-token   # live end-to-end against running services (17 checks)
 ```
 
@@ -161,7 +161,7 @@ Make the repository public (or grant judges access) and check it from a logged-o
 
 ## Known limitations
 
-The default planner handles the request types listed above; anything else fails honestly with suggestions. Memory search is keyword-based, not semantic. Projects are single-owner (membership exists in the schema, no invitation UI). No rate limiting. Bedrock planner unverified. `npm audit` lists advisories in dev-only tooling (Vite/Vitest dev server, bound to 127.0.0.1); production browser packages report none. Confirm the MCP specification version required by the official rules (this build negotiates 2025-06-18).
+The default planner handles the request types listed above; anything else fails honestly with suggestions. Memory search is keyword-based, not semantic. Projects are single-owner (membership exists in the schema, no invitation UI). No rate limiting. Bedrock planner unverified. `npm audit` lists advisories in dev-only tooling (Vite/Vitest dev server, bound to 127.0.0.1); production browser packages report none.
 
 ## Future work
 

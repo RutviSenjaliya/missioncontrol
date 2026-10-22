@@ -5,14 +5,14 @@
 | Item | Value |
 |---|---|
 | Server | `backend/app/mcp_server/server.py` (FastMCP from the official MCP Python SDK) |
-| SDK version | `mcp==1.12.4` |
-| Protocol version negotiated | `2025-06-18` (latest supported by this SDK) |
+| SDK version | `mcp==1.30.0` |
+| Protocol version negotiated | `2025-11-25` (hackathon minimum; latest supported by this SDK) |
 | Transport | Streamable HTTP, endpoint `POST/GET/DELETE /mcp`, stateful sessions via `mcp-session-id` |
 | Messages | JSON-RPC 2.0 |
 | Capabilities used | `tools` (resources and prompts are not exposed: they did not add value to the core workflow) |
 | Authentication | `Authorization: Bearer <user token>` on the HTTP request, checked on every tool call |
 
-> **Check before submitting:** confirm the specification version required by the hackathon rules. If it differs from `2025-06-18`, pin an SDK release that supports it and re-run `pytest tests/test_mcp_protocol.py`.
+> **Hackathon requirement met:** the Alexa+ track requires MCP spec **2025-11-25 or later** over Streamable HTTP. This server negotiates `2025-11-25`, verified by `test_raw_jsonrpc_initialize_and_list` (raw JSON-RPC, no SDK on the client side).
 
 ## Start and connect
 
@@ -28,8 +28,8 @@ Raw protocol check with curl:
 curl -i -X POST http://127.0.0.1:8001/mcp \
   -H "Authorization: Bearer change-me-demo-token" \
   -H "Accept: application/json, text/event-stream" -H "Content-Type: application/json" \
-  -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"curl","version":"0"}}}'
-# -> 200, header mcp-session-id, body: event: message / data: {"jsonrpc":"2.0","id":1,"result":{"protocolVersion":"2025-06-18",...}}
+  -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-11-25","capabilities":{},"clientInfo":{"name":"curl","version":"0"}}}'
+# -> 200, header mcp-session-id, body: event: message / data: {"jsonrpc":"2.0","id":1,"result":{"protocolVersion":"2025-11-25",...}}
 ```
 
 ## Tools

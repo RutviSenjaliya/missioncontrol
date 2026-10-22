@@ -6,8 +6,8 @@ Status key: **Done** = implemented and verified (evidence column). **Team** = ne
 
 | ID | Task | Status | Evidence |
 |---|---|---|---|
-| T01 | Read hackathon rules, judging criteria and submission fields | **Team** | Only the project brief was available; confirm against the official page |
-| T02 | Confirm required MCP spec version | **Team** | Build negotiates `2025-06-18` (SDK 1.12.4); see mcp-integration.md |
+| T01 | Read hackathon rules, judging criteria and submission fields | Done | Official rules reviewed 22 Oct 2026; deadline 23 Oct 2026 12:00 PT |
+| T02 | Confirm required MCP spec version | Done | Rules require 2025-11-25+; server upgraded and negotiates `2025-11-25` (SDK 1.30.0) |
 | T03 | Verify SDK supports Streamable HTTP | Done | `test_raw_jsonrpc_initialize_and_list` |
 | T04 | Freeze MVP scope | Done | PRD §5 |
 | T05 | Design database schema | Done | architecture.md §4, `migrations/versions/0001_initial_schema.py` |

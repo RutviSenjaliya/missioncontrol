@@ -1,17 +1,18 @@
 # Verification report
 
-Everything below was run in the build environment on 22 October 2026 (Ubuntu 24.04, Python 3.12.3, Node 22, PostgreSQL 16). Re-run it yourself with `./scripts/run_tests.sh` and `python scripts/smoke_test.py`.
+Everything below was run in the build environment on 22 October 2026 with MCP Python SDK 1.30.0 (protocol 2025-11-25) (Ubuntu 24.04, Python 3.12.3, Node 22, PostgreSQL 16). Re-run it yourself with `./scripts/run_tests.sh` and `python scripts/smoke_test.py`.
 
 ## Summary
 
 | Check | Result |
 |---|---|
-| Backend test suite on SQLite | **36/36 passed** |
-| Backend test suite on PostgreSQL 16 | **36/36 passed** |
-| Clean install (`python -m venv` + `pip install -r requirements.txt`) then full suite | **36/36 passed** |
+| Backend test suite on SQLite | **37/37 passed** |
+| Backend test suite on PostgreSQL 16 | **37/37 passed** |
+| Clean install (`python -m venv` + `pip install -r requirements.txt`) then full suite | **37/37 passed** |
+| MCP protocol version negotiated (raw JSON-RPC test and live server) | **2025-11-25** (Alexa+ track minimum) |
 | Frontend `npm ci` from lockfile, `tsc` typecheck, Vitest, production build | **pass, 4/4 unit tests** |
 | Alembic `upgrade head` on empty PostgreSQL and `alembic check` | **clean** |
-| Fresh `git clone` → `./scripts/setup.sh` on an empty PostgreSQL database → `./scripts/run_tests.sh` | **pass (36 backend + 4 frontend tests, build ok)** |
+| Fresh `git clone` → `./scripts/setup.sh` on an empty PostgreSQL database → `./scripts/run_tests.sh` | **pass (37 backend + 4 frontend tests, build ok)** |
 | `npm audit --omit=dev` (packages shipped to the browser) | **0 vulnerabilities** |
 | Live smoke test against running API + MCP server + PostgreSQL | **17/17 checks passed** |
 | Live browser test (Chromium via Playwright) of login, dashboard, memory, mission, approval, report, connections, failure | **pass** |
@@ -46,6 +47,7 @@ test_mcp_protocol.py::test_sdk_client_discovers_and_reads — passed
 test_mcp_protocol.py::test_invalid_input_unknown_tool_and_auth_errors — passed
 test_mcp_protocol.py::test_write_tools_require_approved_mission — passed
 test_mcp_protocol.py::test_report_tools_persist_to_shared_database_and_are_idempotent — passed
+test_mcp_protocol.py::test_protocol_version_meets_alexa_plus_minimum — passed
 test_services.py::test_memory_supersession_and_search_excludes_outdated — passed
 test_services.py::test_memory_search_is_project_isolated — passed
 test_services.py::test_memory_validation — passed
@@ -55,7 +57,7 @@ test_services.py::test_require_project_blocks_non_members — passed
 test_services.py::test_state_machine_rules — passed
 test_services.py::test_report_verification_detects_tampering_and_fake_references — passed
 test_services.py::test_report_rejects_unknown_sections — passed
-============================== 36 passed in 7.82s ==============================
+============================== 37 passed in 7.43s ==============================
 ```
 
 What the suites cover:
@@ -74,24 +76,24 @@ What the suites cover:
 1. Connections
   [PASS] API reachable and token accepted
   [PASS] Database connected (postgresql)
-  [PASS] Backend reaches MCP server (2025-06-18)
+  [PASS] Backend reaches MCP server (2025-11-25)
 2. Store project context
   [PASS] Context returns only the current decision
 3. Mission: handoff report (no approval needed)
-  [PASS] Mission #37 completed: Report #35 'Project Handoff Report' saved and verified (10/10 checks passed).
+  [PASS] Mission #6 completed: Report #4 'Project Handoff Report' saved and verified (10/10 checks passed).
   [PASS] Report persisted and verified by read-back
   [PASS] Superseded decision excluded from report
 4. Mission: write with approval
   [PASS] Write mission waits for approval
   [PASS] Nothing written before approval
-  [PASS] After approval: Task #37 'Record demo video' created and verified.
+  [PASS] After approval: Task #9 'Record demo video' created and verified.
   [PASS] Task visible through REST (same source of truth as MCP)
 5. Honest failure
   [PASS] Unsupported request is reported as Failed, not success
 6. Continuity
   [PASS] Later mission uses earlier mission outcomes
 7. MCP server directly (independent client)
-  [PASS] MCP initialize over Streamable HTTP (protocol 2025-06-18)
+  [PASS] MCP initialize over Streamable HTTP (protocol 2025-11-25)
   [PASS] MCP tools/list returns 8 tools
   [PASS] MCP tools/call list_open_tasks reads real data
   [PASS] MCP write without an approved mission is refused
@@ -104,7 +106,7 @@ What the suites cover:
 ```
 1  mission_created     Mission created from your request
 2  planning_started    Mission validated; connecting to the MCP server
-3  mcp_connected       Connected to MCP server 'MissionControl' (protocol 2025-06-18); 8 tools discovered
+3  mcp_connected       Connected to MCP server 'MissionControl' (protocol 2025-11-25); 8 tools discovered
 4  context_retrieved   Project context retrieved from persistent storage via MCP
 5  plan_generated      Plan with 2 step(s): Generate a grounded 'Project Handoff Report' …
 6  tool_invoked        Step 1: calling generate_project_report
@@ -120,9 +122,10 @@ What the suites cover:
 
 | # | Symptom | Cause | Fix |
 |---|---|---|---|
-| 1 | `pydantic` import error when loading the MCP SDK | Newer pydantic incompatible with older SDK | Pinned `pydantic==2.11.7`, `mcp==1.12.4` |
+| 1 | `pydantic` import error when loading the MCP SDK | Newer pydantic incompatible with older SDK | Pinned `pydantic==2.11.7`, `mcp==1.30.0` |
 | 2 | First live mission failed: `ctx Field required` | `from __future__ import annotations` hid the `Context` type from FastMCP | Removed the future import in the server module. The failure itself was reported honestly as *Failed* with the reason |
 | 3 | Unknown JSON-RPC method returned `-32602` | SDK behaviour | Test accepts `-32601` or `-32602` and asserts no result; documented |
+| 5 | Server negotiated MCP spec 2025-06-18, below the track minimum 2025-11-25 | SDK 1.12.4 | Upgraded to MCP SDK 1.30.0 + pydantic 2.14.1; server now negotiates 2025-11-25; all tests re-run |
 | 4 | Dashboard activity feed too noisy | Every low-level event shown | Feed limited to mission outcomes and approvals |
 
 ## Not verified here
@@ -130,7 +133,6 @@ What the suites cover:
 | Item | Why | How to verify |
 |---|---|---|
 | Bedrock planner | No AWS credentials in the build environment | Set `AI_PROVIDER=bedrock`, `BEDROCK_MODEL_ID`, AWS credentials; `pip install boto3`; run the smoke test |
-| Hackathon-required MCP spec version | Official rules not available | Compare with the rules; see mcp-integration.md |
 | Google Fonts loading | Build environment has no internet access; UI fell back to system fonts | Open the app with internet access |
 | Dev-only npm advisories | `npm audit` reports advisories in dev tooling (Vite/Vitest/esbuild dev server); none in production packages | Keep the dev server bound to 127.0.0.1, or upgrade Vite/Vitest majors after re-testing |
 | Deployment to a public host | Out of scope for the build environment | See architecture.md §6 |

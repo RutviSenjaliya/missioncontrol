@@ -121,6 +121,6 @@ Delivered in seven phases (requirements, backend, MCP server, agent, frontend, i
 
 ## 11. Open items for the team
 
-1. Confirm the MCP specification version required by the official hackathon rules. This build negotiates `2025-06-18` with MCP Python SDK 1.12.4.
+1. MCP spec requirement (2025-11-25 or later, Streamable HTTP) is met: the server negotiates `2025-11-25` with MCP Python SDK 1.30.0.
 2. Optional: enable the Bedrock planner with real AWS credentials and run the suite with `AI_PROVIDER=bedrock` (implemented, not verified in this build environment).
 3. Record the demo video following [demo-script.md](demo-script.md).

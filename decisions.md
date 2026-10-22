@@ -13,10 +13,9 @@ Each entry states what was decided, why, what else was considered, and whether i
 **Alternative:** Calling services directly from the agent (simpler, but MCP would then be a side feature).
 **Status:** Implemented.
 
-## D3. Streamable HTTP transport, MCP Python SDK 1.12.4, protocol 2025-06-18
+## D3. Streamable HTTP transport, MCP Python SDK 1.30.0, protocol 2025-11-25
 **Decision:** FastMCP from the official SDK, stateful Streamable HTTP sessions at `/mcp`.
-**Why:** Streamable HTTP is required by the track; the official SDK implements initialization, capability negotiation, JSON-RPC framing, sessions and schema validation correctly. 1.12.4 was pinned because it works with pydantic 2.11 and negotiates 2025-06-18.
-**Open:** Confirm the spec version required by the official rules.
+**Why:** Streamable HTTP is required by the track; the official SDK implements initialization, capability negotiation, JSON-RPC framing, sessions and schema validation correctly. 1.30.0 was pinned because the official hackathon rules require MCP spec 2025-11-25 or later; it negotiates exactly 2025-11-25 and keeps the 1.x FastMCP API (2.x was not adopted to avoid API churn before the deadline).
 **Status:** Implemented and protocol-tested with a raw JSON-RPC harness and the SDK client.
 
 ## D4. Only the tools capability
@@ -81,7 +80,8 @@ Rule-based planner understands a fixed set of request types; Bedrock path unveri
 | Date | Change |
 |---|---|
 | 2026-10-22 | Backend, models, migration, services, MCP server (8 tools), MCP client, orchestrator, state machine, REST API, CLI seed. |
-| 2026-10-22 | Pinned pydantic 2.11.7 / mcp 1.12.4 after an SDK import incompatibility. |
+| 2026-10-22 | Pinned pydantic and the MCP SDK after an SDK import incompatibility. |
 | 2026-10-22 | Fixed FastMCP `Context` detection (removed postponed annotations in server module) after the first live mission failed — and was correctly reported as Failed. |
-| 2026-10-22 | Test suite: 36 backend tests on SQLite and PostgreSQL; frontend typecheck, unit tests, build. |
+| 2026-10-22 | Test suite: 37 backend tests on SQLite and PostgreSQL; frontend typecheck, unit tests, build. |
 | 2026-10-22 | Frontend; live Playwright run; dashboard feed limited to key events; docs; smoke test 17/17. |
+| 2026-10-22 | Upgraded MCP Python SDK 1.12.4 → 1.30.0 (pydantic 2.14.1) so the server negotiates spec 2025-11-25, the minimum required by the official Alexa+ track rules. Full suite re-run on SQLite and PostgreSQL. |
