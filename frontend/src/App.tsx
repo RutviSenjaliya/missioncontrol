@@ -38,7 +38,7 @@ export default function App() {
 
   const seg = route.split("/").filter(Boolean);
   let page;
-  if (seg[0] === "projects" && seg[1]) page = <ProjectPage id={Number(seg[1])} tab={seg[2] ?? "missions"} />;
+  if (seg[0] === "projects" && seg[1]) page = <ProjectPage id={Number(seg[1])} tab={seg[2] ?? "missions"} view={seg[3]} />;
   else if (seg[0] === "missions" && seg[1]) page = <MissionPage id={Number(seg[1])} />;
   else if (seg[0] === "reports" && seg[1]) page = <ReportPage id={Number(seg[1])} />;
   else if (seg[0] === "settings") page = <SettingsPage />;

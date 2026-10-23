@@ -35,8 +35,8 @@ export default function Dashboard() {
       hint: projects.length === 1 ? `Open ${projects[0].name}` : "See all projects",
       go: () => (projects.length === 1 ? open(`#/projects/${projects[0].id}`) : scrollTo("projects-list")) },
     { label: "Unfinished tasks", value: openTasks,
-      hint: taskProject ? "Open tasks & decisions" : "Create a project first",
-      go: () => (taskProject ? open(`#/projects/${taskProject.id}/work`) : scrollTo("projects-list")) },
+      hint: taskProject ? "See unfinished tasks" : "Create a project first",
+      go: () => (taskProject ? open(`#/projects/${taskProject.id}/work/unfinished`) : scrollTo("projects-list")) },
     { label: "Missions in progress", value: active.length,
       hint: running.length === 1 ? "Open the running mission" : active.length ? "See active missions" : "Start one in a project",
       go: () => (running.length === 1 && awaiting.length === 0 ? open(`#/missions/${running[0].id}`)
@@ -82,7 +82,7 @@ export default function Dashboard() {
                 <a key={p.id} className="strip" href={`#/projects/${p.id}`} style={{ gridTemplateColumns: "8px minmax(0,1fr) auto" }}>
                   <span className="strip-edge" aria-hidden />
                   <span className="strip-body"><span className="strip-req" style={{ display: "block" }}>{p.name}</span><span className="strip-meta" style={{ display: "block" }}>{p.description || "No description yet"}</span></span>
-                  <span className="strip-state"><span className="small muted num">{p.open_tasks} open</span></span>
+                  <span className="strip-state"><span className="small muted num" title="Unfinished tasks">{p.open_tasks} open</span></span>
                 </a>
               ))}
             </div>

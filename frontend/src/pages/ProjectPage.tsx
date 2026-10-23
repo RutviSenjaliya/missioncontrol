@@ -21,7 +21,7 @@ const EXAMPLES = [
   "Record decision: Use PostgreSQL - one shared source of truth",
 ];
 
-export default function ProjectPage({ id, tab }: { id: number; tab: string }) {
+export default function ProjectPage({ id, tab, view }: { id: number; tab: string; view?: string }) {
   const project = usePoll(() => api.project(id), [id]);
   if (project.error && !project.data) return <ErrorNotice error={project.error} onRetry={project.refresh} />;
   const p = project.data;
@@ -34,7 +34,7 @@ export default function ProjectPage({ id, tab }: { id: number; tab: string }) {
           <button key={t.id} role="tab" className="tab" aria-selected={tab === t.id} onClick={() => (window.location.hash = `#/projects/${id}/${t.id}`)}>{t.label}</button>
         ))}
       </div>
-      {tab === "memory" ? <MemoryTab pid={id} /> : tab === "work" ? <WorkTab pid={id} /> : tab === "reports" ? <ReportsTab pid={id} /> : <MissionsTab pid={id} />}
+      {tab === "memory" ? <MemoryTab pid={id} /> : tab === "work" ? <WorkTab pid={id} view={view} /> : tab === "reports" ? <ReportsTab pid={id} /> : <MissionsTab pid={id} />}
     </>
   );
 }
@@ -154,7 +154,7 @@ function MemoryTab({ pid }: { pid: number }) {
 
 const STATUS_TEXT: Record<Task["status"], string> = { open: "Open", in_progress: "In progress", blocked: "Blocked", done: "Done" };
 
-function WorkTab({ pid }: { pid: number }) {
+function WorkTab({ pid, view }: { pid: number; view?: string }) {
   const tasks = usePoll(() => api.tasks(pid), [pid]);
   const decisions = usePoll(() => api.decisions(pid), [pid]);
   const [title, setTitle] = useState("");
@@ -163,6 +163,11 @@ function WorkTab({ pid }: { pid: number }) {
   const [dDesc, setDDesc] = useState("");
   const [supersedes, setSupersedes] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const showAll = view !== "unfinished";
+  const setView = (v: "unfinished" | "all") => (window.location.hash = `#/projects/${pid}/work${v === "unfinished" ? "/unfinished" : ""}`);
+  const allTasks = tasks.data ?? [];
+  const unfinished = allTasks.filter((t) => t.status !== "done");
+  const shown = showAll ? allTasks : unfinished;
 
   async function run(fn: () => Promise<unknown>, after: () => Promise<unknown>) {
     setError(null);
@@ -172,17 +177,21 @@ function WorkTab({ pid }: { pid: number }) {
   return (
     <div className="grid-2">
       <section>
-        <h2 className="section" style={{ marginTop: 0 }}>Tasks</h2>
+        <h2 className="section" style={{ marginTop: 0 }}>{showAll ? "Tasks" : `Unfinished tasks (${unfinished.length})`}</h2>
+        <div className="row" style={{ marginBottom: 10 }} role="group" aria-label="Which tasks to show">
+          <button type="button" className="chip" aria-pressed={!showAll} style={!showAll ? { borderColor: "var(--ink)" } : undefined} onClick={() => setView("unfinished")}>Unfinished ({unfinished.length})</button>
+          <button type="button" className="chip" aria-pressed={showAll} style={showAll ? { borderColor: "var(--ink)" } : undefined} onClick={() => setView("all")}>All ({allTasks.length})</button>
+        </div>
         <form className="row" style={{ marginBottom: 12 }} onSubmit={(e) => { e.preventDefault(); run(async () => { await api.createTask(pid, { title: title.trim(), priority: prio }); setTitle(""); }, tasks.refresh); }}>
           <input className="input" style={{ flex: "1 1 220px" }} aria-label="Task title" placeholder="New task" value={title} onChange={(e) => setTitle(e.target.value)} required />
           <select className="input" style={{ width: "auto" }} aria-label="Priority" value={prio} onChange={(e) => setPrio(e.target.value as Task["priority"])}><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option></select>
           <button className="btn btn-primary" disabled={!title.trim()}>Add task</button>
         </form>
         <ErrorNotice error={error || tasks.error} />
-        {tasks.data?.length ? (
+        {shown.length ? (
           <div className="table-wrap"><table>
             <thead><tr><th>#</th><th>Task</th><th>Priority</th><th>Status</th></tr></thead>
-            <tbody>{tasks.data.map((t) => (
+            <tbody>{shown.map((t) => (
               <tr key={t.id}>
                 <td className="num muted">{t.id}</td>
                 <td className={t.status === "done" ? "superseded" : undefined}>{t.title}</td>
@@ -191,7 +200,7 @@ function WorkTab({ pid }: { pid: number }) {
                   {Object.entries(STATUS_TEXT).map(([k, v]) => <option key={k} value={k}>{v}</option>)}</select></td>
               </tr>))}</tbody>
           </table></div>
-        ) : !tasks.loading && <Empty>No tasks yet.</Empty>}
+        ) : !tasks.loading && <Empty>{showAll ? "No tasks yet." : "Nothing unfinished — every task is done. 🎉"}</Empty>}
       </section>
       <section>
         <h2 className="section" style={{ marginTop: 0 }}>Decisions</h2>
