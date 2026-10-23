@@ -22,6 +22,30 @@ export default function Dashboard() {
   const openTasks = data?.projects.reduce((n, p) => n + p.open_tasks, 0) ?? 0;
   const waiting = data?.active_missions.filter((m) => m.status === "awaiting_approval").length ?? 0;
 
+  // Each summary card opens the most useful place for what it counts.
+  const open = (hash: string) => { window.location.hash = hash; };
+  const scrollTo = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  const projects = data?.projects ?? [];
+  const active = data?.active_missions ?? [];
+  const running = active.filter((m) => m.status !== "awaiting_approval");
+  const awaiting = active.filter((m) => m.status === "awaiting_approval");
+  const taskProject = projects.find((p) => p.open_tasks > 0) ?? projects[0];
+  const cards = [
+    { label: "Projects", value: projects.length,
+      hint: projects.length === 1 ? `Open ${projects[0].name}` : "See all projects",
+      go: () => (projects.length === 1 ? open(`#/projects/${projects[0].id}`) : scrollTo("projects-list")) },
+    { label: "Unfinished tasks", value: openTasks,
+      hint: taskProject ? "Open tasks & decisions" : "Create a project first",
+      go: () => (taskProject ? open(`#/projects/${taskProject.id}/work`) : scrollTo("projects-list")) },
+    { label: "Missions in progress", value: active.length,
+      hint: running.length === 1 ? "Open the running mission" : active.length ? "See active missions" : "Start one in a project",
+      go: () => (running.length === 1 && awaiting.length === 0 ? open(`#/missions/${running[0].id}`)
+        : active.length ? scrollTo("active-missions") : projects[0] ? open(`#/projects/${projects[0].id}/missions`) : scrollTo("projects-list")) },
+    { label: "Waiting for your approval", value: waiting,
+      hint: awaiting.length === 1 ? "Review and approve" : awaiting.length ? "See missions to approve" : "Nothing to approve",
+      go: () => (awaiting.length === 1 ? open(`#/missions/${awaiting[0].id}`) : scrollTo("active-missions")) },
+  ];
+
   return (
     <>
       <h1 className="page">Dashboard</h1>
@@ -29,16 +53,17 @@ export default function Dashboard() {
       <ErrorNotice error={error} onRetry={refresh} />
       {data && (
         <div className="stats">
-          <div className="stat"><b className="num">{data.projects.length}</b><span>Projects</span></div>
-          <div className="stat"><b className="num">{openTasks}</b><span>Unfinished tasks</span></div>
-          <div className="stat"><b className="num">{data.active_missions.length}</b><span>Missions in progress</span></div>
-          <div className="stat"><b className="num">{waiting}</b><span>Waiting for your approval</span></div>
+          {cards.map((c) => (
+            <button key={c.label} type="button" className="stat stat-link" onClick={c.go} title={c.hint}>
+              <b className="num">{c.value}</b><span>{c.label}</span><small>{c.hint} →</small>
+            </button>
+          ))}
         </div>
       )}
 
       <div className="grid-2">
         <section>
-          <h2 className="section">Active missions</h2>
+          <h2 className="section" id="active-missions">Active missions</h2>
           {loading && !data ? <p className="muted">Loading missions…</p> : data?.active_missions.length ? (
             <div className="strips">{data.active_missions.map((m) => <MissionStrip key={m.id} m={m} showProject />)}</div>
           ) : <Empty>No mission is running. Open a project and ask MissionControl to do something.</Empty>}
@@ -50,7 +75,7 @@ export default function Dashboard() {
         </section>
 
         <aside>
-          <h2 className="section">Projects</h2>
+          <h2 className="section" id="projects-list">Projects</h2>
           {data?.projects.length ? (
             <div className="strips">
               {data.projects.map((p) => (

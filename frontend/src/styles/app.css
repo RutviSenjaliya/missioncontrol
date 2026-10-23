@@ -189,3 +189,6 @@ tr:last-child td { border-bottom: 0; }
 .login { min-height: 100%; display: grid; place-items: center; padding: 24px; }
 .login .panel { width: min(440px, 100%); display: grid; gap: 16px; padding: 28px; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.stat-link { text-align: left; cursor: pointer; color: inherit; font: inherit; width: 100%; transition: border-color .15s, transform .15s; }
+.stat-link:hover { border-color: var(--ink-2); transform: translateY(-1px); }
+.stat-link small { display: block; margin-top: 6px; font-size: 13px; color: var(--signal); font-weight: 600; }
