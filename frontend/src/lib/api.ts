@@ -7,11 +7,11 @@ export const setToken = (t: string | null) => (t ? localStorage.setItem(TOKEN_KE
 export class ApiError extends Error {
   constructor(public status: number, message: string) { super(message); }
 }
-
+const API_BASE_URL = (import.meta.env.VITE_API_URL ?? "").replace(/\/$/, "");
 async function req<T>(method: string, path: string, body?: unknown): Promise<T> {
   let res: Response;
   try {
-    res = await fetch(`/api${path}`, {
+    res = await fetch(`${API_BASE_URL}/api${path}`, {
       method,
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${getToken() ?? ""}` },
       body: body === undefined ? undefined : JSON.stringify(body),
